@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PdfUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">appliweb</a> &gt; <a href="index.source.html" class="el_package">fr.diginamic.appliweb.utils.pdf</a> &gt; <span class="el_source">PdfUtils.java</span></div><h1>PdfUtils.java</h1><pre class="source lang-java linenums">package fr.diginamic.appliweb.utils.pdf;
+
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import fr.diginamic.appliweb.entites.Departement;
+import fr.diginamic.appliweb.entites.Ville;
+import fr.diginamic.appliweb.utils.StringUtils;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+
+@Component
+<span class="fc" id="L28">public class PdfUtils {</span>
+
+<span class="fc" id="L30">    static final DeviceRgb HEADER_COLOR = new DeviceRgb(41, 128, 185); // Bleu</span>
+<span class="fc" id="L31">    static final DeviceRgb TITLE_COLOR = new DeviceRgb(52, 152, 219); // Bleu clair</span>
+<span class="fc" id="L32">    static final DeviceRgb TABLE_HEADER_COLOR = new DeviceRgb(236, 240, 241); // Gris très clair</span>
+<span class="fc" id="L33">    static final DeviceRgb BORDER_COLOR = new DeviceRgb(189, 195, 199); // Gris clair</span>
+<span class="fc" id="L34">    static final DeviceRgb WHITE = new DeviceRgb(255, 255, 255);</span>
+
+    // Polices
+    static PdfFont fontRegular;
+    static PdfFont fontBold;
+    static PdfFont fontItalic;
+
+    public void createPdf(Departement departement, HttpServletResponse response)
+            throws FileNotFoundException, IOException {
+
+        // Initialisation du document
+<span class="nc" id="L45">        PdfWriter writer = new PdfWriter(response.getOutputStream());</span>
+<span class="nc" id="L46">        PdfDocument pdf = new PdfDocument(writer);</span>
+<span class="nc" id="L47">        Document document = new Document(pdf, PageSize.A4);</span>
+
+<span class="nc" id="L49">        document.setMargins(36, 36, 36, 36);</span>
+
+<span class="nc" id="L51">        fontRegular = PdfFontFactory.createFont(&quot;Helvetica&quot;);</span>
+<span class="nc" id="L52">        fontBold = PdfFontFactory.createFont(&quot;Helvetica-Bold&quot;);</span>
+<span class="nc" id="L53">        fontItalic = PdfFontFactory.createFont(&quot;Helvetica-Oblique&quot;);</span>
+
+        // Création de l'en-tête
+<span class="nc" id="L56">        createHeader(document, departement.getNom(), departement.getCode());</span>
+
+        // Ajout d'informations générales
+<span class="nc" id="L59">        createInfoSection(document, departement.getNom(), departement.getCode());</span>
+
+        // Création de la table des villes
+<span class="nc" id="L62">        createCitiesTable(document, departement.getVilles());</span>
+
+        // Ajout d'un pied de page
+<span class="nc" id="L65">        createFooter(document);</span>
+
+<span class="nc" id="L67">        document.close();</span>
+<span class="nc" id="L68">    }</span>
+
+    private void createHeader(Document document, String nomDepartement, String codeDepartement) {
+        // Bannière principale
+<span class="nc" id="L72">        Table header = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();</span>
+<span class="nc" id="L73">        Cell headerCell = new Cell();</span>
+<span class="nc" id="L74">        headerCell.setBackgroundColor(HEADER_COLOR);</span>
+<span class="nc" id="L75">        headerCell.setPadding(20);</span>
+<span class="nc" id="L76">        headerCell.setBorder(new SolidBorder(BORDER_COLOR, 1));</span>
+
+<span class="nc" id="L78">        Paragraph title = new Paragraph(&quot;Département: &quot; + nomDepartement)</span>
+<span class="nc" id="L79">                .setFont(fontBold)</span>
+<span class="nc" id="L80">                .setFontSize(24)</span>
+<span class="nc" id="L81">                .setFontColor(ColorConstants.WHITE)</span>
+<span class="nc" id="L82">                .setTextAlignment(TextAlignment.CENTER);</span>
+
+<span class="nc" id="L84">        headerCell.add(title);</span>
+<span class="nc" id="L85">        header.addCell(headerCell);</span>
+<span class="nc" id="L86">        document.add(header);</span>
+
+        // Espacement
+<span class="nc" id="L89">        document.add(new Paragraph(&quot;\n&quot;));</span>
+<span class="nc" id="L90">    }</span>
+
+    private void createInfoSection(Document document, String nomDepartement, String codeDepartement) {
+        // Encadré d'informations générales
+<span class="nc" id="L94">        Table infoTable = new Table(UnitValue.createPercentArray(new float[]{1, 1})).useAllAvailableWidth();</span>
+<span class="nc" id="L95">        infoTable.setBackgroundColor(new DeviceRgb(240, 248, 255)); // Couleur bleu très clair</span>
+<span class="nc" id="L96">        infoTable.setBorder(new SolidBorder(BORDER_COLOR, 1));</span>
+
+        // Nom du département
+<span class="nc" id="L99">        infoTable.addCell(CellFactory.getCell(&quot;Nom du département:&quot;, nomDepartement, 14, TITLE_COLOR, 6));</span>
+
+        // Code du département
+<span class="nc" id="L102">        Cell codeCell = CellFactory.getCell(&quot;Code du département:&quot;, codeDepartement, 14, TITLE_COLOR, 6);</span>
+<span class="nc" id="L103">        infoTable.addCell(codeCell);</span>
+
+<span class="nc" id="L105">        document.add(infoTable);</span>
+
+        // Espacement
+<span class="nc" id="L108">        document.add(new Paragraph(&quot;\n&quot;));</span>
+<span class="nc" id="L109">    }</span>
+
+    private void createCitiesTable(Document document, List&lt;Ville&gt; villes) {
+        // Titre de la section
+<span class="nc" id="L113">        Paragraph citiesTitle = new Paragraph(&quot;Les &quot;+villes.size()+&quot; plus grandes villes&quot;)</span>
+<span class="nc" id="L114">                .setFont(fontBold)</span>
+<span class="nc" id="L115">                .setFontSize(16)</span>
+<span class="nc" id="L116">                .setFontColor(TITLE_COLOR)</span>
+<span class="nc" id="L117">                .setTextAlignment(TextAlignment.LEFT);</span>
+<span class="nc" id="L118">        document.add(citiesTitle);</span>
+
+<span class="nc" id="L120">        document.add(new Paragraph(&quot;\n&quot;).setFontSize(5));</span>
+
+        // Création de la table
+<span class="nc" id="L123">        Table citiesTable = new Table(UnitValue.createPercentArray(new float[]{3, 2})).useAllAvailableWidth();</span>
+<span class="nc" id="L124">        citiesTable.setBorder(new SolidBorder(BORDER_COLOR, 1));</span>
+
+        // En-tête de la table
+<span class="nc" id="L127">        citiesTable.addHeaderCell(CellFactory.getCell(&quot;Nom de la ville&quot;, fontBold,TABLE_HEADER_COLOR, 6));</span>
+<span class="nc" id="L128">        citiesTable.addHeaderCell(CellFactory.getCell(&quot;Population&quot;, fontBold, TABLE_HEADER_COLOR, 6));</span>
+
+        // Remplissage de la table avec les données
+<span class="nc" id="L131">        boolean alternate = false;</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        for (Ville ville : villes) {</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">            DeviceRgb backgroundColor = alternate ? WHITE : new DeviceRgb(245, 245, 245);</span>
+<span class="nc" id="L134">            citiesTable.addCell(CellFactory.getCell(ville.getNom(), fontRegular, backgroundColor, 6));</span>
+<span class="nc" id="L135">            citiesTable.addCell(CellFactory.getCell(StringUtils.formatNombre(ville.getNbHabs()), fontRegular, backgroundColor, 6));</span>
+
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            alternate = !alternate;</span>
+<span class="nc" id="L138">        }</span>
+
+<span class="nc" id="L140">        document.add(citiesTable);</span>
+<span class="nc" id="L141">    }</span>
+
+    private void createFooter(Document document) {
+<span class="nc" id="L144">        document.add(new Paragraph(&quot;\n&quot;));</span>
+
+<span class="nc" id="L146">        Table footer = new Table(1).useAllAvailableWidth();</span>
+<span class="nc" id="L147">        Cell footerCell = new Cell();</span>
+<span class="nc" id="L148">        footerCell.setPadding(10);</span>
+<span class="nc" id="L149">        footerCell.setBorder(new SolidBorder(BORDER_COLOR, 0.5f));</span>
+<span class="nc" id="L150">        footerCell.setBackgroundColor(new DeviceRgb(245, 245, 245));</span>
+
+<span class="nc" id="L152">        Paragraph footerText = new Paragraph(&quot;Document généré automatiquement - &quot; + java.time.LocalDate.now())</span>
+<span class="nc" id="L153">                .setFont(fontItalic)</span>
+<span class="nc" id="L154">                .setFontSize(10)</span>
+<span class="nc" id="L155">                .setFontColor(new DeviceRgb(100, 100, 100))</span>
+<span class="nc" id="L156">                .setTextAlignment(TextAlignment.CENTER);</span>
+
+<span class="nc" id="L158">        footerCell.add(footerText);</span>
+<span class="nc" id="L159">        footer.addCell(footerCell);</span>
+<span class="nc" id="L160">        document.add(footer);</span>
+<span class="nc" id="L161">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

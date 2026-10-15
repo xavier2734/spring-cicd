@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VilleDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">appliweb</a> &gt; <a href="index.source.html" class="el_package">fr.diginamic.appliweb.mappers.dtos</a> &gt; <span class="el_source">VilleDto.java</span></div><h1>VilleDto.java</h1><pre class="source lang-java linenums">package fr.diginamic.appliweb.mappers.dtos;
+
+import fr.diginamic.appliweb.dao.DepartementDao;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public class VilleDto {
+
+    private int id;
+
+    @NotNull
+    @Size(min=2)
+    private String nom;
+
+    @Min(1)
+    private int nbHabs;
+    private DepartementDto departement;
+
+<span class="nc" id="L20">    public VilleDto(){</span>
+
+<span class="nc" id="L22">    }</span>
+
+<span class="fc" id="L24">    public VilleDto(String nom, int nbHabs) {</span>
+<span class="fc" id="L25">        this.nom = nom;</span>
+<span class="fc" id="L26">        this.nbHabs = nbHabs;</span>
+<span class="fc" id="L27">    }</span>
+
+<span class="fc" id="L29">    public VilleDto(int id, String nom, int nbHabs) {</span>
+<span class="fc" id="L30">        this.id = id;</span>
+<span class="fc" id="L31">        this.nom = nom;</span>
+<span class="fc" id="L32">        this.nbHabs = nbHabs;</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * Getter
+     *
+     * @return id
+     */
+    public int getId() {
+<span class="fc" id="L41">        return id;</span>
+    }
+
+    /**
+     * Setter
+     *
+     * @param id id
+     */
+    public void setId(int id) {
+<span class="nc" id="L50">        this.id = id;</span>
+<span class="nc" id="L51">    }</span>
+
+    /**
+     * Getter
+     *
+     * @return nbHabs
+     */
+    public int getNbHabs() {
+<span class="fc" id="L59">        return nbHabs;</span>
+    }
+
+    /**
+     * Setter
+     *
+     * @param nbHabs nbHabs
+     */
+    public void setNbHabs(int nbHabs) {
+<span class="nc" id="L68">        this.nbHabs = nbHabs;</span>
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Getter
+     *
+     * @return nom
+     */
+    public String getNom() {
+<span class="fc" id="L77">        return nom;</span>
+    }
+
+    /**
+     * Setter
+     *
+     * @param nom nom
+     */
+    public void setNom(String nom) {
+<span class="nc" id="L86">        this.nom = nom;</span>
+<span class="nc" id="L87">    }</span>
+
+    /**
+     * Getter
+     *
+     * @return departement
+     */
+    public DepartementDto getDepartement() {
+<span class="fc" id="L95">        return departement;</span>
+    }
+
+    /**
+     * Setter
+     *
+     * @param departement departement
+     */
+    public void setDepartement(DepartementDto departement) {
+<span class="fc" id="L104">        this.departement = departement;</span>
+<span class="fc" id="L105">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

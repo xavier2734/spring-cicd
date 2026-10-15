@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DepartementController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">appliweb</a> &gt; <a href="index.source.html" class="el_package">fr.diginamic.appliweb.controleurs</a> &gt; <span class="el_source">DepartementController.java</span></div><h1>DepartementController.java</h1><pre class="source lang-java linenums">package fr.diginamic.appliweb.controleurs;
+
+import fr.diginamic.appliweb.exceptions.ExceptionFonctionnelle;
+import fr.diginamic.appliweb.mappers.dtos.DepartementDto;
+import fr.diginamic.appliweb.services.DepartementService;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * Point d'entrée de l'API sur les départements
+ */
+@RestController
+@RequestMapping(&quot;/departements&quot;)
+<span class="fc" id="L18">public class DepartementController {</span>
+
+    /** Application service pour le traitement des CU sur les départements */
+    @Autowired
+    private DepartementService service;
+
+    /**
+     * Extraction des départements
+     * @return List de {@link DepartementDto}
+     */
+    @GetMapping(&quot;/tous&quot;)
+    public List&lt;DepartementDto&gt; extraire(){
+
+<span class="nc" id="L31">        return service.extraire();</span>
+    }
+
+    /**
+     * Extraction d'un département à partir de son identifiant
+     * @param id identifiant
+     * @return {@link DepartementDto}
+     * @throws ExceptionFonctionnelle si l'identifiant n'existe pas
+     */
+    @GetMapping(&quot;/id/{id}&quot;)
+    public DepartementDto extractParId(@PathVariable int id) throws ExceptionFonctionnelle {
+
+<span class="nc" id="L43">        return service.extraireParId(id);</span>
+    }
+
+    /**
+     * Extraction d'un département à partir de son code
+     * @param code code du département
+     * @return {@link DepartementDto}
+     * @throws ExceptionFonctionnelle si le code du département n'existe pas
+     */
+    @GetMapping(&quot;/code/{code}&quot;)
+    public DepartementDto extractParCode(@PathVariable String code) throws ExceptionFonctionnelle {
+
+<span class="nc" id="L55">        return service.extraireParCode(code);</span>
+    }
+
+    /**
+     * Export PDF de la fiche du département avec toutes les villes connues
+     * @param code code du département
+     * @param response réponse HTTP
+     */
+    @GetMapping(&quot;/export/{code}&quot;)
+    public void exportVillesParPopMin(@PathVariable String code, HttpServletResponse response){
+
+<span class="nc" id="L66">        service.exportVillesParDepartement(code, response);</span>
+<span class="nc" id="L67">    }</span>
+
+    /**
+     * Insertion d'un nouveau département
+     * @param nvDepartement données du nouveau département (code obligatoire)
+     * @return List de {@link DepartementDto}
+     * @throws ExceptionFonctionnelle si le code du département n'est pas renseigné.
+     */
+    @PostMapping
+    public ResponseEntity&lt;?&gt; insert(@RequestBody DepartementDto nvDepartement) throws ExceptionFonctionnelle {
+
+<span class="nc" id="L78">        return ResponseEntity.ok(service.inserer(nvDepartement));</span>
+    }
+
+    /**
+     * Modification d'un département
+     * @param departement données modifiées du département (identifiant obligatoire)
+     * @return List de {@link DepartementDto}
+     * @throws ExceptionFonctionnelle si le code du département n'est pas renseigné.
+     */
+    @PutMapping
+    public ResponseEntity&lt;?&gt; modifVille(@RequestBody DepartementDto departement) throws ExceptionFonctionnelle {
+
+<span class="nc" id="L90">        return ResponseEntity.ok(service.modifier(departement));</span>
+    }
+
+    /**
+     * Suppression d'un département à partir de son identifiant
+     * @param id identifiant
+     * @return List de {@link DepartementDto}
+     * @throws ExceptionFonctionnelle si l'identifiant n'existe pas
+     */
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;?&gt; supprVille(@PathVariable int id) throws ExceptionFonctionnelle {
+
+<span class="nc" id="L102">        return ResponseEntity.ok(service.supprimer(id));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
