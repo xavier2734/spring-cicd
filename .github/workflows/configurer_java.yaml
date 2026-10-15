@@ -1,0 +1,30 @@
+# Nom du workflow affiché dans l'onglet Actions
+name: Configuration Java
+
+# Déclenchement manuel avec le bouton "Run workflow"
+on:
+  workflow_dispatch:
+
+jobs:
+  # Nom du job (repris du modèle du prof)
+  affichage:
+    # Machine Ubuntu prêtée par GitHub
+    runs-on: ubuntu-latest
+    steps:
+      # 1re étape : on installe Java 21 sur le runner
+      - name: Installer Java 21
+        # Action officielle pour installer Java (v5 = tourne sur Node 24, pas de warning)
+        uses: actions/setup-java@v5
+        # "with" = les paramètres qu'on passe à l'action
+        with:
+          # Quelle distribution de Java : Temurin, c'est l'OpenJDK d'Eclipse, la plus courante
+          distribution: 'temurin'
+          # La version voulue
+          java-version: '21'
+
+      # 2e étape : on affiche les versions pour vérifier
+      - name: Afficher les versions Java et Maven
+        # Le "|" permet d'écrire plusieurs commandes, une par ligne
+        run: |
+          java -version
+          mvn -version
