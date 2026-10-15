@@ -1,0 +1,50 @@
+# Nom du workflow dans l'onglet Actions
+name: CI CodeQL
+
+# Déclenchement automatique à chaque push sur main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  analyse:
+    # Machine Ubuntu prêtée par GitHub
+    runs-on: ubuntu-latest
+
+    # Les droits du job : CodeQL doit pouvoir écrire ses résultats dans l'onglet Security
+    permissions:
+      # Lire le code du dépôt
+      contents: read
+      # Envoyer le rapport de sécurité
+      security-events: write
+
+    steps:
+      # 1. On récupère le code (sinon CodeQL n'a rien à analyser)
+      - name: Récupérer le code
+        uses: actions/checkout@v5
+
+      # 2. On installe Java 21 (la version du pom.xml)
+      - name: Installer Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # 3. CodeQL se prépare et se met à surveiller la compilation
+      - name: Initialiser CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          # Le langage à analyser (java-kotlin = le nom officiel pour Java)
+          languages: java-kotlin
+          # "manual" = c'est nous qui lançons la compilation à l'étape suivante
+          build-mode: manual
+
+      # 4. On compile le projet avec Maven, et CodeQL observe pendant ce temps
+      - name: Compiler avec Maven
+        # -B = mode batch (logs plus propres en CI)
+        # -DskipTests = on saute les tests, ici on veut juste compiler pour CodeQL
+        run: mvn -B clean package -DskipTests
+
+      # 5. CodeQL analyse le code et envoie le rapport dans l'onglet Security
+      - name: Analyse CodeQL
+        uses: github/codeql-action/analyze@v4
