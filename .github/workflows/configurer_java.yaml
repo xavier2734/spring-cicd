@@ -28,3 +28,13 @@ jobs:
         run: |
           java -version
           mvn -version
+
+       # 3e étape : on récupère le code du dépôt sur le runner
+      - name: Récupérer le code
+        # Même action qu'au TP 2, en v5 pour éviter le warning Node 20
+        uses: actions/checkout@v5
+
+        # 4e étape : on liste les fichiers récupérés pour vérifier que le checkout a marché
+      - name: Lister les fichiers
+        # -l = détaillé, -a = montre aussi les fichiers cachés (.github, .mvn...)
+        run: ls -la
