@@ -95,6 +95,28 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- JaCoCo : mesure quelles lignes du code sont exécutées par les tests -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.13</version>
+				<executions>
+					<!-- 1. Avant les tests : JaCoCo branche son "espion" sur la JVM des tests -->
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+						</goals>
+					</execution>
+					<!-- 2. Après les tests : JaCoCo génère le rapport HTML dans target/site/jacoco -->
+					<execution>
+						<id>report</id>
+						<!-- La phase "verify" vient juste après les tests et le package -->
+						<phase>verify</phase>
+						<goals>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
