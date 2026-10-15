@@ -39,25 +39,37 @@ jobs:
           # "manual" = c'est nous qui lançons la compilation à l'étape suivante
           build-mode: manual
 
-      # 4. On compile le projet avec Maven, et CodeQL observe pendant ce temps
-      - name: Compiler avec Maven
-        # -B = mode batch (logs plus propres en CI)
-        # -DskipTests = on saute les tests, ici on veut juste compiler pour CodeQL
-        run: mvn -B clean package -DskipTests
+      # 4. On compile ET on lance les tests avec Maven (CodeQL observe la compilation)
+      - name: Compiler et tester avec Maven
+        # Variable d'environnement : Spring utilise application-test.properties (base H2)
+        # Sinon AppliwebApplicationTests chercherait MySQL, absent du runner
+        env:
+          SPRING_PROFILES_ACTIVE: test
+        # verify = compile + tests + package + rapport JaCoCo
+        run: mvn -B clean verify
 
       # 5. CodeQL analyse le code et envoie le rapport dans l'onglet Security
       - name: Analyse CodeQL
         # v5 tourne sur Node.js 24 : plus de warning de dépréciation
-        uses: actions/upload-artifact@v5
+        uses: github/codeql-action/analyze@v4
         with:
           # On demande à CodeQL d'écrire aussi le rapport (fichier .sarif) dans ce dossier
           output: rapport-codeql
 
       # 6. On met le rapport en téléchargement sur la page de l'exécution
       - name: Publier le rapport CodeQL
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           # Le nom du fichier zip à télécharger
           name: rapport-codeql
           # Le dossier où CodeQL a écrit son rapport
           path: rapport-codeql
+
+      # 7. On met le rapport JaCoCo en téléchargement
+      - name: Publier le rapport JaCoCo
+        uses: actions/upload-artifact@v5
+        with:
+          # Le nom du zip à télécharger
+          name: rapport-jacoco
+          # Le dossier où JaCoCo génère son rapport HTML
+          path: target/site/jacoco
