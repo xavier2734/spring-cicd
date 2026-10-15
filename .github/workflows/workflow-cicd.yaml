@@ -47,7 +47,8 @@ jobs:
 
       # 5. CodeQL analyse le code et envoie le rapport dans l'onglet Security
       - name: Analyse CodeQL
-        uses: github/codeql-action/analyze@v4
+        # v5 tourne sur Node.js 24 : plus de warning de dépréciation
+        uses: actions/upload-artifact@v5
         with:
           # On demande à CodeQL d'écrire aussi le rapport (fichier .sarif) dans ce dossier
           output: rapport-codeql
