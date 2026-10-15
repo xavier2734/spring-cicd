@@ -104,7 +104,7 @@
 					<execution>
 						<id>prepare-agent</id>
 						<goals>
-							<!-- Branche JaCoCo sur la JVM qui lance les tests -->
+							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
 					<!-- 2. Après les tests : JaCoCo génère le rapport HTML dans target/site/jacoco -->
@@ -113,7 +113,7 @@
 						<!-- La phase "verify" vient juste après les tests et le package -->
 						<phase>verify</phase>
 						<goals>
-							<!-- Génère le rapport HTML dans target/site/jacoco -->
+							<goal>report</goal>
 						</goals>
 					</execution>
 				</executions>
