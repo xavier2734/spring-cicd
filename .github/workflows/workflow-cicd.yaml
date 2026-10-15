@@ -48,3 +48,15 @@ jobs:
       # 5. CodeQL analyse le code et envoie le rapport dans l'onglet Security
       - name: Analyse CodeQL
         uses: github/codeql-action/analyze@v4
+        with:
+          # On demande à CodeQL d'écrire aussi le rapport (fichier .sarif) dans ce dossier
+          output: rapport-codeql
+
+      # 6. On met le rapport en téléchargement sur la page de l'exécution
+      - name: Publier le rapport CodeQL
+        uses: actions/upload-artifact@v4
+        with:
+          # Le nom du fichier zip à télécharger
+          name: rapport-codeql
+          # Le dossier où CodeQL a écrit son rapport
+          path: rapport-codeql
