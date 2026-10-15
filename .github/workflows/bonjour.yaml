@@ -3,12 +3,9 @@ name: Exemple Bonjour
 # Nom de chaque exécution (le "run") dans la liste
 run-name: Exemple Bonjour
 
-# Quand est-ce que ça se déclenche ?
+# Déclenchement manuel uniquement : un bouton "Run workflow" apparaît dans l'onglet Actions
 on:
-  # À chaque push...
-  push:
-    # ...mais seulement sur la branche main
-    branches: [ "main" ]
+  workflow_dispatch:
 
 # La liste des jobs (les tâches) à lancer
 jobs:
