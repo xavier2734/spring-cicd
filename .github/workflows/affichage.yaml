@@ -15,7 +15,8 @@ jobs:
       # 1re étape : on récupère le code du dépôt sur le runner
       # "uses" = on utilise une action toute faite au lieu d'écrire une commande
       - name: Récupérer le code
-        uses: actions/checkout@v4
+        # v5 tourne sur Node.js 24 : plus de warning de dépréciation
+        uses: actions/checkout@v5
 
       # 2e étape : on liste les fichiers récupérés
       # -l = affichage détaillé, -a = montre aussi les fichiers cachés (.github, .mvn...)
