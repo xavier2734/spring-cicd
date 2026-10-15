@@ -1,0 +1,25 @@
+# Nom du workflow, c'est ce qui s'affiche dans l'onglet Actions de GitHub
+name: Exemple Bonjour
+# Nom de chaque exécution (le "run") dans la liste
+run-name: Exemple Bonjour
+
+# Quand est-ce que ça se déclenche ?
+on:
+  # À chaque push...
+  push:
+    # ...mais seulement sur la branche main
+    branches: [ "main" ]
+
+# La liste des jobs (les tâches) à lancer
+jobs:
+  # Le nom de notre job, en kebab-case
+  dire-bonjour:
+    # GitHub nous prête une machine Ubuntu toute fraîche pour le lancer
+    runs-on: ubuntu-latest
+
+    # Les étapes du job, exécutées dans l'ordre
+    steps:
+      # Le nom de l'étape, visible dans les logs GitHub
+      - name: Afficher Bonjour
+        # La commande shell à lancer : un simple echo
+        run: echo "Bonjour depuis GitHub Actions !"
