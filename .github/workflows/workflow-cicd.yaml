@@ -58,7 +58,7 @@ jobs:
 
       # 6. On met le rapport en téléchargement sur la page de l'exécution
       - name: Publier le rapport CodeQL
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           # Le nom du fichier zip à télécharger
           name: rapport-codeql
@@ -67,7 +67,7 @@ jobs:
 
       # 7. On met le rapport JaCoCo en téléchargement
       - name: Publier le rapport JaCoCo
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           # Le nom du zip à télécharger
           name: rapport-jacoco
