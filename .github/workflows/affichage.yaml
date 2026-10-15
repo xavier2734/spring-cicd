@@ -1,0 +1,23 @@
+# Nom du workflow affiché dans l'onglet Actions
+name: Affichage fichiers
+
+# Déclenchement manuel, comme pour bonjour.yaml maintenant
+on:
+  workflow_dispatch:
+
+jobs:
+  # Le nom du job
+  affichage:
+    # Machine Ubuntu prêtée par GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1re étape : on récupère le code du dépôt sur le runner
+      # "uses" = on utilise une action toute faite au lieu d'écrire une commande
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      # 2e étape : on liste les fichiers récupérés
+      # -l = affichage détaillé, -a = montre aussi les fichiers cachés (.github, .mvn...)
+      - name: Lister les fichiers
+        run: ls -la
