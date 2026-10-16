@@ -73,3 +73,21 @@ jobs:
           name: rapport-jacoco
           # Le dossier où JaCoCo génère son rapport HTML
           path: target/site/jacoco
+
+      # 8. On génère le site Maven (c'est lui qui lance le plugin Checkstyle du "reporting")
+      - name: Générer le site Maven
+        # Même profil test que pour verify, au cas où
+        env:
+          SPRING_PROFILES_ACTIVE: test
+        # mvn site = fabrique le site HTML avec tous les rapports dans target/site
+        run: mvn -B site
+
+      # 9. On met le site (avec le rapport Checkstyle dedans) en téléchargement
+      - name: Publier le rapport Checkstyle
+        # Même version que nos autres uploads
+        uses: actions/upload-artifact@v6
+        with:
+          # Le nom du zip qu'on pourra télécharger
+          name: rapport-checkstyle
+          # Tout le site Maven : le rapport est dans checkstyle.html
+          path: target/site/

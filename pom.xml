@@ -120,4 +120,22 @@
 			</plugin>
 		</plugins>
 	</build>
+	<!-- Reporting : les plugins qui fabriquent des rapports pour "mvn site" (rien à voir avec le build) -->
+	<reporting>
+		<plugins>
+			<!-- Checkstyle : vérifie que le code respecte des règles d'écriture (nommage, javadoc, imports...) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<!-- PARTIE 1 : on met d'abord sun_checks.xml (règles par défaut, hyper strictes) -->
+					<!-- PARTIE 2 : on remplace par config/checkstyle.xml (le fichier perso du prof) -->
+					<configLocation>sun_checks.xml</configLocation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>
+
+
