@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VilleServiceDefaut.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">appliweb</a> &gt; <a href="index.source.html" class="el_package">fr.diginamic.appliweb.services</a> &gt; <span class="el_source">VilleServiceDefaut.java</span></div><h1>VilleServiceDefaut.java</h1><pre class="source lang-java linenums">package fr.diginamic.appliweb.services;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
+import fr.diginamic.appliweb.dao.DepartementRepository;
+import fr.diginamic.appliweb.dao.VilleRepository;
+import fr.diginamic.appliweb.entites.Departement;
+import fr.diginamic.appliweb.entites.Ville;
+import fr.diginamic.appliweb.exceptions.ExceptionFonctionnelle;
+import fr.diginamic.appliweb.exceptions.ExceptionTechnique;
+import fr.diginamic.appliweb.mappers.VilleMapper;
+import fr.diginamic.appliweb.mappers.dtos.VilleDto;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
+
+/**
+ * Services de type &quot;application&quot; pour l'exécution des CU des villes.
+ */
+@Service
+<span class="fc" id="L27">public class VilleServiceDefaut implements VilleService {</span>
+
+    /** Services de type application pour l'exécution des CU des départements */
+    @Autowired
+    private DepartementService departementService;
+
+    /** Accès base de données à la table des villes */
+    @Autowired
+    private VilleRepository dao;
+
+    /** Mapper pour transformer des Ville en VilleDto */
+    @Autowired
+    private VilleMapper mapper;
+
+    /** Accès base de données à la table des départements */
+    @Autowired
+    private DepartementRepository deptDao;
+
+    /** Permet de valider les données obligatoires reçues du front */
+    @Autowired
+    private Validator validator;
+
+    @Override
+    public List&lt;VilleDto&gt; extraire(PageRequest pageRequest){
+<span class="fc" id="L51">        return mapper.toDtos(dao.findAll(pageRequest).toList());</span>
+    }
+
+    @Override
+    public List&lt;VilleDto&gt; extraire(){
+<span class="fc" id="L56">        return mapper.toDtos(dao.findAll());</span>
+    }
+
+    @Override
+    public VilleDto extraireParId(int id) throws ExceptionFonctionnelle {
+
+<span class="fc" id="L62">        Ville ville = dao.findById(id);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (ville==null){</span>
+<span class="nc" id="L64">            throw new ExceptionFonctionnelle(&quot;La ville d'identifiant &quot;+id+&quot; n'existe pas.&quot;);</span>
+        }
+
+<span class="fc" id="L67">        return mapper.toDto(dao.findById(id));</span>
+    }
+
+    @Override
+    public List&lt;VilleDto&gt; extractVillesParPopulationMin(int mink) {
+
+<span class="fc" id="L73">        int min = mink*1000;</span>
+
+<span class="fc" id="L75">        List&lt;Ville&gt; villes = dao.findByNbHabsGreaterThanOrderByNbHabsDesc(min);</span>
+<span class="fc" id="L76">        villes.stream().forEach(v-&gt;departementService.completeDepartement(v.getDepartement()));</span>
+
+<span class="fc" id="L78">        return mapper.toDtos(villes);</span>
+    }
+
+    @Override
+    public List&lt;VilleDto&gt; findVillesByMinAndDepartement(int mink, String departementCode) throws ExceptionFonctionnelle {
+
+<span class="nc" id="L84">        Departement departement = deptDao.findByCode(departementCode);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (departement==null){</span>
+<span class="nc" id="L86">            throw new ExceptionFonctionnelle(&quot;Le département n'existe pas.&quot;);</span>
+        }
+<span class="nc" id="L88">        int min = mink*1000;</span>
+<span class="nc" id="L89">        return mapper.toDtos(dao.findVillesByMinAndDepartement(min, departementCode));</span>
+    }
+
+    @Override
+    public List&lt;VilleDto&gt; extractVillesPopEntreMinEtMax(int mink, int maxk) throws ExceptionFonctionnelle {
+
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (maxk&lt;mink){</span>
+<span class="nc" id="L96">            throw new ExceptionFonctionnelle(&quot;Le max doit être supérieur au min&quot;);</span>
+        }
+<span class="nc" id="L98">        int min = mink*1000;</span>
+<span class="nc" id="L99">        int max = maxk*1000;</span>
+
+<span class="nc" id="L101">        return mapper.toDtos(dao.findByNbHabsBetweenOrderByNbHabsDesc(min, max));</span>
+    }
+
+    @Override
+    public List&lt;VilleDto&gt; extractVilleNomLike(String debut) {
+<span class="nc" id="L106">        return mapper.toDtos(dao.findByNomStartingWith(debut));</span>
+    }
+
+    @Override
+    public List&lt;VilleDto&gt; extraireVillesPourDepartementMinMax(int mink, int maxk, String departementCode) throws ExceptionFonctionnelle {
+
+<span class="nc" id="L112">        Departement deptExistant = deptDao.findByCode(departementCode);</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (deptExistant==null){</span>
+<span class="nc" id="L114">            throw new ExceptionFonctionnelle(&quot;Ce département n'existe pas.&quot;);</span>
+        }
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (maxk&lt;mink){</span>
+<span class="nc" id="L117">            throw new ExceptionFonctionnelle(&quot;Le max doit être supérieur au min.&quot;);</span>
+        }
+<span class="nc" id="L119">        int min = mink*1000;</span>
+<span class="nc" id="L120">        int max = maxk*1000;</span>
+
+<span class="nc" id="L122">        return mapper.toDtos(dao.findVillesBetweenMinAndMaxAndDepartement(min, max, departementCode));</span>
+    }
+
+    @Transactional
+    @Override
+    public List&lt;VilleDto&gt; inserer(VilleDto dto) throws ExceptionFonctionnelle {
+
+<span class="fc" id="L129">        Errors result = validator.validateObject(dto);</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L131">            throw new ExceptionFonctionnelle(result.getAllErrors().get(0).getDefaultMessage());</span>
+        }
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (dto.getDepartement()==null){</span>
+<span class="nc" id="L134">            throw new ExceptionFonctionnelle(&quot;Le département est obligatoire.&quot;);</span>
+        }
+
+<span class="fc" id="L137">        Departement departementDB = departementService.verifierDonnesEtInsererDepartement(dto.getDepartement());</span>
+<span class="fc" id="L138">        Ville ville = mapper.toBean(dto);</span>
+
+        // Enfin je vérifie si une ville avec le même existe ou pas
+<span class="fc" id="L141">        List&lt;Ville&gt; villesDB = dao.findByNom(dto.getNom());</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        for (Ville villeDB: villesDB){</span>
+
+            // Il ne ne doit pas exister une ville avec le même nom dans le même département
+<span class="nc bnc" id="L145" title="All 2 branches missed.">            if (ville.getDepartement().getId()==dto.getDepartement().getId()){</span>
+<span class="nc" id="L146">                throw new ExceptionFonctionnelle(&quot;Il existe déjà une ville avec le même nom dans ce département.&quot;);</span>
+            }
+<span class="nc" id="L148">        }</span>
+
+        // Insertion
+<span class="fc" id="L151">        ville.setDepartement(departementDB);</span>
+<span class="fc" id="L152">        dao.save(ville);</span>
+
+<span class="fc" id="L154">        return mapper.toDtos(dao.findAll());</span>
+    }
+
+    @Transactional
+    @Override
+    public List&lt;VilleDto&gt; modifier(VilleDto dto) throws ExceptionFonctionnelle {
+
+<span class="fc" id="L161">        Errors result = validator.validateObject(dto);</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L163">            throw new ExceptionFonctionnelle(result.getAllErrors().get(0).getDefaultMessage());</span>
+        }
+
+<span class="fc" id="L166">        Departement departement = departementService.verifierDonnesEtInsererDepartement(dto.getDepartement());</span>
+<span class="fc" id="L167">        List&lt;Ville&gt; villes = dao.findByNom(dto.getNom());</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        for (Ville ville: villes){</span>
+
+            // Il ne ne doit pas exister une ville avec le même nom dans le même département
+<span class="pc bpc" id="L171" title="3 of 4 branches missed.">            if (ville.getId()!=dto.getId() &amp;&amp; ville.getDepartement().getId()==dto.getDepartement().getId()){</span>
+<span class="nc" id="L172">                throw new ExceptionFonctionnelle(&quot;Il existe déjà une ville avec le même nom dans ce département.&quot;);</span>
+            }
+<span class="fc" id="L174">        }</span>
+
+<span class="fc" id="L176">        Ville villeDB = dao.findById(dto.getId());</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (villeDB!=null) {</span>
+<span class="fc" id="L178">            Ville villeModif = dao.findById(dto.getId());</span>
+<span class="fc" id="L179">            villeModif.setNom(dto.getNom());</span>
+<span class="fc" id="L180">            villeModif.setNbHabs(dto.getNbHabs());</span>
+<span class="fc" id="L181">            villeModif.setDepartement(departement);</span>
+        }
+<span class="fc" id="L183">        return mapper.toDtos(dao.findAll());</span>
+    }
+
+    @Transactional
+    @Override
+    public List&lt;VilleDto&gt; supprimer(int id) throws ExceptionFonctionnelle {
+
+<span class="fc" id="L190">        Ville villeDB = dao.findById(id);</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (villeDB==null){</span>
+<span class="nc" id="L192">            throw new ExceptionFonctionnelle(&quot;Le département d'identifiant &quot;+id+&quot; n'existe pas.&quot;);</span>
+        }
+<span class="fc" id="L194">        dao.deleteById(id);</span>
+<span class="fc" id="L195">        return mapper.toDtos(dao.findAll());</span>
+    }
+
+    @Override
+    public void exportCsv(int min, HttpServletResponse response) {
+        // On commence par positionner une propriété dans le header de la réponse pour indiquer la présence
+        // d'un fichier attaché
+<span class="nc" id="L202">        response.setHeader(&quot;Content-Disposition&quot;, &quot;attachment; filename=\&quot;export_population_&quot;+min+&quot;k.csv\&quot;&quot;);</span>
+        try {
+            // On va écrire dans le flux de sortie de la réponse HTTP avec response.getWriter()
+<span class="nc" id="L205">            response.getWriter().append(&quot;Code département;Nom du département;Ville;Population\n&quot;);</span>
+<span class="nc" id="L206">            List&lt;VilleDto&gt; dtos = extractVillesParPopulationMin(min);</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">            for (VilleDto dto: dtos){</span>
+<span class="nc" id="L208">                String serialVille = dto.getDepartement().getCode()+&quot;;&quot;+dto.getDepartement().getNom()+&quot;;&quot;+dto.getNom()+&quot;;&quot;+dto.getNbHabs()+&quot;\n&quot;;</span>
+<span class="nc" id="L209">                response.getWriter().append(serialVille);</span>
+<span class="nc" id="L210">            }</span>
+
+            // Finalisation de la réponse HTTP
+<span class="nc" id="L213">            response.flushBuffer();</span>
+<span class="nc" id="L214">        } catch (IOException e) {</span>
+<span class="nc" id="L215">            throw new ExceptionTechnique(&quot;Erreur survenue lors de lé ganération du fichier CSv : &quot;+e.getMessage());</span>
+<span class="nc" id="L216">        }</span>
+<span class="nc" id="L217">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
