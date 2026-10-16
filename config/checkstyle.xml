@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="warning"/>
+    <property name="fileExtensions" value="java, properties, xml"/>
+
+    <module name="TreeWalker">
+
+        <!-- Vérifie que equals() et hashCode() sont redéfinies ensemble -->
+        <module name="EqualsHashCode"/>
+
+        <!-- Signale les comparaisons de littéraux String avec == ou != -->
+        <module name="StringLiteralEquality"/>
+
+        <!-- Signale les instructions vides : if (condition); -->
+        <module name="EmptyStatement"/>
+
+        <!-- Signale les passages non explicités entre les case d'un switch -->
+        <module name="FallThrough"/>
+
+        <!-- ============================================================= -->
+        <!-- JAVADOC                                                       -->
+        <!-- ============================================================= -->
+
+        <!-- Exige une Javadoc sur les types publics et protégés -->
+        <module name="MissingJavadocType">
+            <property name="scope" value="protected"/>
+        </module>
+
+        <!-- Vérifie le contenu de la Javadoc des types publics et protégés -->
+        <module name="JavadocType">
+            <property name="scope" value="protected"/>
+        </module>
+
+        <!-- Exige une Javadoc sur les méthodes publiques et protégées,
+             sauf celles portant les annotations indiquées -->
+        <module name="MissingJavadocMethod">
+            <property name="scope" value="protected"/>
+            <property name="allowedAnnotations" value="Override, Test, Bean"/>
+        </module>
+
+        <!-- Vérifie le contenu de la Javadoc des méthodes -->
+        <module name="JavadocMethod">
+            <property name="accessModifiers" value="public, protected"/>
+            <property name="allowedAnnotations" value="Override, Test, Bean"/>
+        </module>
+
+        <!-- Exige une Javadoc sur les attributs publics et protégés -->
+        <module name="JavadocVariable">
+            <property name="scope" value="protected"/>
+        </module>
+
+        <!-- Vérifie la forme de la Javadoc sans imposer de point final -->
+        <module name="JavadocStyle">
+            <property name="checkFirstSentence" value="false"/>
+        </module>
+
+        <!-- ============================================================= -->
+        <!-- IMPORTS                                                       -->
+        <!-- ============================================================= -->
+
+        <!-- Interdit les imports avec .* -->
+        <module name="AvoidStarImport"/>
+
+        <!-- Signale les imports inutilisés -->
+        <module name="UnusedImports"/>
+
+        <!-- ============================================================= -->
+        <!-- NOMMAGE                                                       -->
+        <!-- ============================================================= -->
+
+        <module name="PackageName"/>
+        <module name="TypeName"/>
+        <module name="MethodName"/>
+        <module name="LocalVariableName"/>
+        <module name="ParameterName"/>
+        <module name="StaticVariableName"/>
+
+        <!-- ============================================================= -->
+        <!-- STRUCTURE DU CODE                                             -->
+        <!-- ============================================================= -->
+
+        <!-- Signale les blocs vides -->
+        <module name="EmptyBlock"/>
+
+        <!-- Exige des accolades pour les structures de contrôle -->
+        <module name="NeedBraces"/>
+
+        <!-- Vérifie l'ordre des modificateurs -->
+        <module name="ModifierOrder"/>
+
+        <!-- Signale les variables qui masquent un attribut,
+             sauf les paramètres des constructeurs et des setters -->
+        <module name="HiddenField">
+            <property name="ignoreConstructorParameter" value="true"/>
+            <property name="ignoreSetter" value="true"/>
+        </module>
+
+        <!-- Collecte les annotations @SuppressWarnings -->
+        <module name="SuppressWarningsHolder"/>
+
+    </module>
+
+    <!-- Applique les suppressions déclarées avec @SuppressWarnings -->
+    <module name="SuppressWarningsFilter"/>
+
+</module>

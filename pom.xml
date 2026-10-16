@@ -129,9 +129,8 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>3.6.0</version>
 				<configuration>
-					<!-- PARTIE 1 : on met d'abord sun_checks.xml (règles par défaut, hyper strictes) -->
-					<!-- PARTIE 2 : on remplace par config/checkstyle.xml (le fichier perso du prof) -->
-					<configLocation>sun_checks.xml</configLocation>
+					<!-- On utilise notre fichier de règles perso (dossier config à la racine du projet) -->
+					<configLocation>config/checkstyle.xml</configLocation>
 				</configuration>
 			</plugin>
 		</plugins>
